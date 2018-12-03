@@ -1,0 +1,565 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+        <record id="base.lang_en" model="res.lang">
+            <field name="date_format">%d-%b-%Y</field>
+        </record>
+        <record id='fleet_vehicle_log_contract_form' model='ir.ui.view'>
+            <field name="name">fleet.vehicle.log_contract.form</field>
+            <field name="model">obj.contract</field>
+            <field name="arch" type="xml">
+                <form string="Contract logs" version="7.0">
+                     <header>
+                            <button name="open_wizard"  string="Facturer" type="object" class="oe_highlight" attrs="{'invisible': [('facturee', '=', 1)]}"/>
+                            <button name="marque_termine" states="En cours" string="Marquer Terminé" type="object" class="oe_highlight"/>
+                            <button name="marque_en_cours" states="Terminé" string="Marquer En cours" type="object" class="oe_highlight"/>
+                            <button class="oe_highlight" name="act_renew_contract"  type="object" string="Revouveler le Contract" help="Create a new contract automatically with all the same informations except for the date that will start at the end of current contract" />
+                            <button name="Contrat_Imprimer"  string="Contrat d'impression" type="object" class="oe_highlight"/>
+
+                            <field name="state" widget="statusbar" statusbar_visible="En cours,Terminé" statusbar_colors='{"En cours":"blue","Terminé":"red"}'/>
+                        </header>
+                        <act_window
+            id="act_renew_contract"
+            name="Renew Contract"
+            res_model="notime.vehicle.log.contract"
+            src_model="notime.vehicle.log.contract"
+            view_mode="form"
+            view_type="form"
+            />
+                   
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                             <button name="make_order"
+                            class="oe_stat_button"
+                            icon="fa-book"
+                            type="object"
+                            string="Make Order"
+                            >
+                     </button>
+                        </div>
+                        <field name='facturee' invisible='True'/>
+                        <group col="2">
+                            <group string="Details de contrat">
+                                <field name="voiture_id"  domain="[('disponibilite','=','d')]"/>
+                                
+                                    <field name="client" />
+                                    field not seen invisible invisible="1" 
+                                    
+
+                                     <field name="voiture_car_value"   />
+                                       <field name="jours"/>
+                                    
+                            </group>
+                            <group string="Relevé kilométrique">
+                                <field name="odometer" class="oe_inline"/>
+
+                    
+                            </group>    
+                           
+                        </group>
+                        <group col="2">
+                            <group>
+                                <field name="date"/>
+                                <field name="start_date"/>
+                                <field name="expiration_date"/>
+                            </group>
+                            <group>
+                               
+                               
+                                <field name="name" />
+                                <field name='listprice'/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="facture_id" widget='many2onebutton'/>
+                           <field name="sum_cost"/>
+                        </group>
+                        <group string="Conditions et termes">
+                            <field name="notes" nolabel="1" placeholder="Ajouter des informations supplémentaires" />
+                        </group>
+                    </sheet>
+                     <div class="oe_chatter">
+                            <field name="message_follower_ids" widget="mail_followers"/>
+                            <field name="message_ids" widget="mail_thread"/>
+                        </div>
+                </form>
+            </field>
+        </record> 
+
+
+
+
+        <record model='ir.ui.view' id='fleet_vehicle_log_contract_tree'>
+            <field name="name">fleet.vehicle.log.contract.tree</field>
+            <field name="model">obj.contract</field>
+            <field name="arch" type="xml">
+                <tree string="Contract logs" version="7.0" >
+                    <field name="name" />
+                    <field name="date"/>
+                    <field name="start_date" />
+                    <field name="expiration_date"/>
+                    <field name="client" />
+                    <field name="voiture_id"/>
+                    <field name="jours"/>
+                    <field name="sum_cost"/>
+                    <field name="odometer" />
+                    <field name="notes" />
+                   
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="fleet_vehicle_log_contract_search">
+            <field name="name">fleet.vehicle.log.contract.search</field>
+            <field name="model">obj.contract</field>
+            <field name="arch" type="xml">
+                <search string="Contrats">
+                    <field name="name"/>
+                    <field name="sum_cost" />
+                    <field name="expiration_date" />
+                    <field name="start_date" />
+                    <field name="date" />
+                    
+               </search>
+            </field>
+        </record>
+
+        <record model='ir.actions.act_window' id='fleet_vehicle_log_contract_act'>
+            <field name="name">Contrats</field>
+            <field name="res_model">obj.contract</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Cliquer ici pour creer un nouveau contrat. 
+              </p>
+            </field>
+        </record>
+
+
+
+<menuitem name="Location de voiture " id="menu" />
+            <menuitem name="Location des voitures" id="menu_contrat" parent="menu" sequence="2"  />
+                <menuitem id="fleet_vehicle_log_contract_menu" parent="menu_contrat" action="fleet_vehicle_log_contract_act" />
+                
+
+
+        <record model='ir.ui.view' id='fleet_vehicle_form'>
+            <field name="name">fleet.vehicle.form</field>
+            <field name="model">obj.voiture</field>
+            <field name="arch" type="xml">
+                <form string="Voiture" version="7.0">
+                    
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button type="object" name="open_contracts" icon="fa-book" class="oe_inline oe_stat_button">
+                                <field string="Contrats" name="count_contracts" widget="statinfo"/>
+                            </button>
+                        </div>
+                        <field name="image_medium" widget='image' class="oe_left oe_avatar"/>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1>
+                                <field name="name" />
+                            </h1>
+                            <label for="license_plate" class="oe_edit_only"/>
+                            <h2>
+                                <field name="license_plate" class="oe_inline"/>
+                            </h2>
+                            
+                        </div>
+
+
+                    
+                        <group col="2" string="Propriétés">
+                                <group >
+
+                                    <field name="location" />
+                                    <field name="vin_sn" />
+                                    <field name="Classe" />
+                                    <field name="disponibilite" />
+                                     <field name="carte_grise" />
+                                   
+
+
+
+                                </group>
+                                <group >
+                                    <label for="odometer" />
+                                    <div>
+                                        <field name="odometer" class="oe_inline"/>
+                                        <field name="odometer_unit" class="oe_inline"/>
+                                    </div>
+                                    <field name="acquisition_date" />
+                                    <field name="car_value" />
+                                </group>
+                        </group>
+                        <group col="2">
+                                <group string="Options">
+                                    <field name="seats" />
+
+                                    <field name="color" />
+                                </group>
+                                <group string="Options du moteur">
+                                    <field name="transmission" />
+                                    <field name="fuel_type" />
+                                    <field name="co2" />
+                                    <field name="horsepower" />
+                                    <field name="power" />
+                                </group>
+                        </group>
+                      
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record model='ir.ui.view' id='fleet_vehicle_tree'>
+            <field name="name">fleet.vehicle.tree</field>
+            <field name="model">obj.voiture</field>
+            <field name="arch" type="xml">
+                <tree string="Vehicle" version="7.0">
+                    <field name="license_plate" />
+                    <field name="name" />
+                    <field name="Classe" />
+                    <field name="disponibilite" />
+                    <field name="location" />
+                    <field name="vin_sn" />
+                    <field name="odometer" />
+                    <field name="acquisition_date" />
+                    <field name="car_value" />
+                    <field name="seats" />
+                    <field name="color" />
+                    <field name="transmission" />
+                    <field name="fuel_type" />
+                    <field name="co2" />
+                    <field name="horsepower" />
+                    <field name="power" />
+
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="fleet_vehicle_search">
+            <field name="name">fleet.vehicle.search</field>
+            <field name="model">obj.voiture</field>
+            <field name="arch" type="xml">
+                <search string="Voitures">
+                    <field name="license_plate"/>
+                    <field name="car_value" />
+                    <field name="seats" />
+                    <field name="color" />
+                    <field name="transmission" />
+                    <field name="fuel_type" />
+                    <field name="power" />
+                    <field name="name" />
+                    <field name="Classe" />
+                    <field name="disponibilite" />
+                    
+               </search>
+            </field>
+        </record>
+
+
+        
+
+        <record model='ir.actions.act_window' id='fleet_vehicle_act'>
+            <field name="name">Voitures</field>
+            <field name="type">ir.actions.act_window</field> 
+            <field name="res_model">obj.voiture</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="fleet_vehicle_tree" />
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Cliquer ici pour ajouter une nouvelle voiture. </p> 
+              
+            </field>
+        </record>
+
+       
+        <menuitem id="fleet_vehicle_menu" parent="menu_contrat" action="fleet_vehicle_act" />
+
+
+        <record id="client_form" model="ir.ui.view">
+            <field name="name">client.form</field> 
+            <field name="model">obj.client</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml"> 
+                <form string="Client" version="7.0">      
+                    <sheet>
+                        <field name="civilite"  style="width:40%%"/> 
+                        <div class="oe_button_box" name="button_box">
+                            <button type="object" name="open_contracts" icon="fa-book" class="oe_inline oe_stat_button">
+                                <field string="Contrats" name="count_contracts" widget="statinfo"/>
+                            </button>
+                        </div>
+                        <div class="oe_title">
+                            
+                            <label for="name" class="oe_edit_only"/>
+                                <h1>
+                                    <field name="name"/>
+                                </h1>
+                        </div>
+                        <notebook>
+                            <page string="Informations personnels" >
+                                <group> 
+                                    
+                                    <field name="num_permis" /> 
+                                    <field name="cin" /> 
+                                    <field name="date_nais" />
+                                   
+                                </group>                
+                            </page>
+
+                            <page string="les coordonnées" >
+                                <group>
+                                    <group>
+                                        <field name="tel"/>
+                                        <field name="tel_portable"/>
+                                        <field name="fax"/>
+                                        <field name="courriel"/>
+                                    </group>
+                                    <group>
+                                        <field name="adresse" />
+                                        <field name="ville" />
+                                        <field name="pays" />
+                                        <field name="code_pos" />
+                                    </group>
+                                </group>
+
+
+
+
+                            </page>
+                        </notebook>        
+                    </sheet>
+                </form> 
+            </field>
+        </record>
+
+        <!-- tree view -->
+        <record id="client_tree" model="ir.ui.view"> 
+            <field name="name">client.tree</field> 
+            <field name="model">obj.client</field>
+            <field name="type">tree</field>  
+            <field name="arch" type="xml"> 
+                <tree string="Client" > 
+                    <field name="name" /> 
+                    <field name="num_permis" /> 
+                    <field name="cin" /> 
+                    <field name="tel_portable"/>
+                    <field name="adresse"/> 
+                    <field name="ville"/> 
+                    <field name="pays"/> 
+                </tree> 
+            </field>
+        </record>
+
+        <!-- search view -->
+        <record id="client_search" model="ir.ui.view"> 
+            <field name="name">client.search</field> 
+            <field name="model">obj.client</field>
+            <field name="type">search</field>  
+            <field name="arch" type="xml"> 
+                <search string="client" > 
+                    <field name="name" /> 
+                    <field name="num_permis" /> 
+                    <field name="cin" />
+                </search> 
+            </field>
+        </record>
+
+        <!-- menu action --> 
+        <record model="ir.actions.act_window" id="action_client"> 
+            <field name="name">Client</field> 
+            <field name="type">ir.actions.act_window</field> 
+            <field name="res_model">obj.client</field> 
+            <field name="view_type">form</field> 
+            <field name="view_mode">tree,form</field> 
+            <field name="view_id" ref="client_tree" />
+            <field name="help" type="html"> 
+                <p class="oe_view_nocontent_create"> Cliquez ici pour créer un nouveau client.</p> 
+            </field> 
+        </record>
+
+        <menuitem id="menu_client_action" parent="menu_contrat" action="action_client" />
+
+        
+       
+
+
+        <record id="facture_form" model="ir.ui.view">
+            <field name="name">facture.client.form</field> 
+            <field name="model">facture.client</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml"> 
+
+                
+                <form>
+                    <sheet>
+                        <group col='4'>
+                            <field name='name'/>
+                            <field name='contrat_id'/>
+                             <field name='client'/>
+                             <field name='prix_total'/>
+                        </group>
+                        <notebook>
+                            <page string='voiture louée'>
+                                <group>
+                                    <field name='voiture'>
+                                        <!--tree editable='bottom'>
+                                            <field name='voiture'/>
+                                            <field name='prix'/>
+                                        </tree-->
+                                    </field>
+                                </group>
+                            <field name='payee' invisible='True'/>
+                            <field name='state' invisible='True'/>
+                        </page>
+                        </notebook>
+                    </sheet>
+                    <footer>
+
+                    <button name="paye_abonnement" string="Payer" type="object"  class="oe_highlight" confirm="Voulez vous vraiment effectuez cette opération?"
+                        states='En cours'/>
+                        
+                        <button string="Annuler" class="oe_link" special="cancel" states='En cours'/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+
+        <record model="ir.actions.act_window" id="action_facture"> 
+            <field name="name">Facture Client</field> 
+            <field name="type">ir.actions.act_window</field> 
+            <field name="res_model">facture.client</field> 
+            <field name="view_type">form</field> 
+            <field name="view_mode">tree,form</field> 
+            <field name="help" type="html"> 
+                <p class="oe_view_nocontent_create"> Cliquez ici pour créer une nouvelle liste des prix.</p> 
+            </field> 
+        </record>
+        <menuitem id="menu_facture_client" parent="menu_contrat" action="action_facture"/>
+
+      <!-- Rapport de  livraison -->
+       <record model='ir.ui.view' id='rapport_de_livraison_forme'>
+            <field name="name">rapport de livraison forme</field>
+            <field name="model">rapport.livraison</field>
+            <field name="arch" type="xml">
+                <form string="rapport livraison" version="7.0">
+                     <header>
+                            <button name="imprimer_le_rapport"  string="impression" type="object" class="oe_highlight"/>
+                        </header>
+                    <sheet>
+                        <group col="2">
+                            <group string="les proprietes generales">
+                                <field name="numero"/>
+                                    <field name="nom_conducteur" />
+                                    <field name="cin"   />
+                                    <field name="vehicule"   />
+                                    <field name="matricule"/>
+                                    <field name="date_livre"/>
+                                    <field name="lieu_livraison"/>
+                                    <field name="etat"/>
+    
+                            </group>
+                            <group col="1">
+                            <group string="des documents" col="2">
+                             <field name="vignette"/>
+                             <field name="carnet"/>
+                             <field name="autorisation"/>
+                             <field name="circulation"/>
+                             <field name="visite"/>
+                             <field name="carte"/>
+                             <field name="att_assurance"/>
+                            </group>    
+                            <group string="Etat Des Pneus" col="2">
+                                <field name="enjoliveurs"/>
+                                <field name="roue_secours"/>
+                             </group>
+                         </group>
+                        </group>
+                        
+                           <!--  <group>
+                                
+                            </group>
+                        </group> -->
+                        <group>
+                        <group string="équipement" col="2">
+                            <field name="antenne"/>
+                           <field name="ciqare"/>
+                           <field name="goblet"/>
+                            <field name="propret"/>
+                        </group>
+                    </group>
+                        <group string="Image de la voiture" col="6">
+                            <field name="image1" widget='image' class="oe_left oe_avatar"/>
+                            <field name="image2" widget='image' class="oe_left oe_avatar"/>
+                        </group>
+                        <group string="la description">
+                     <div class="la description">
+                            <field name="notes" placeholder="écrire ici toute autre information"/>
+                        </div>
+                    </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+         <record model="ir.actions.act_window" id="rapport_livraison"> 
+            <field name="name">rapport livraison</field> 
+            <field name="type">ir.actions.act_window</field> 
+            <field name="res_model">rapport.livraison</field> 
+            <field name="view_type">form</field> 
+            <field name="view_mode">tree,form</field> 
+            <field name="help" type="html"> 
+                <p class="oe_view_nocontent_create"> cliquez pour créer un nouvel enregistrement.</p> 
+            </field> 
+        </record>
+
+       <menuitem name="Rapport" id="rapport" parent="menu"/>
+                 <menuitem name="Rapport de livraison" id="rapport_de _livraison" parent="rapport" action="rapport_livraison" /> 
+                 
+        
+
+
+
+
+<record id="facture_form" model="ir.ui.view">
+            <field name="name">facture.client.form</field> 
+            <field name="model">purchase.order</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml"> 
+
+                
+                <form>
+                    <sheet>
+                      <field name="vehicle_id" attrs="{'invisible':[('applied', '!=', '2_vehicle')],'required':[('applied', '=', '2_vehicle')]}"/>
+                    <field name="client" attrs="{'invisible':[('applied', '!=', '1_client')],'required':[('applied', '=', '1_client')]}"/>
+                    </sheet>
+                    
+                </form>
+            </field>
+        </record>
+
+
+        <record model="ir.actions.act_window" id="action_facture"> 
+            <field name="name">Facture Client</field> 
+            <field name="type">ir.actions.act_window</field> 
+            <field name="res_model">purchase.order</field> 
+            <field name="view_type">form</field> 
+            <field name="view_mode">tree,form</field> 
+            <field name="help" type="html"> 
+                <p class="oe_view_nocontent_create"> Cliquez ici pour créer une nouvelle facturex.</p> 
+            </field> 
+        </record>
+             
+              
+              <menuitem name="Facturer" id="rent_order" parent="menu_contrat" action="sale.action_quotations"/>
+              
+            
+
+     
+	</data> 
+</odoo>
